@@ -3,16 +3,18 @@
             [clojure.string :refer [join]]))
 
 (def canonical
+  "Dump format to replicate output of `hexdump -C`."
   {:bytes-per-line 16
    :groups-per-line 2
    :offset-width 8})
 
 (def wide
+  "Wide format inspired by `hexdump -C`."
   {:bytes-per-line 32
    :groups-per-line 4
    :offset-width 8})
 
-(def ^:dynamic *dump-format* canonical)
+(def ^:dynamic *dump-format* "Current dump format." canonical)
 
 (defn ^:private byte->unsigned
   [x]
@@ -56,6 +58,11 @@
             :bytestring-width (+ (* bytes-per-line 3) groups-per-line)))))
 
 (defn dump-seq
+  "Return a lazy sequence of strings (without newlines) representing
+  the dump of `thing`, which can be a string, a sequence of bytes, a
+  byte array, or anything that `slurp` would otherwise accept. The
+  sequence is formatted according to the dump format at the time of
+  invocation. (Note that strings are treated as strings, not URIs.)"
   [thing]
   (cond (string? thing)
         (dump-bytes (.getBytes thing))
@@ -67,15 +74,19 @@
         (dump-bytes (.getBytes (slurp thing)))))
 
 (defn dump-str
+  "Return a string a with a representation of the dump of `thing`."
   [thing]
   (join \newline (dump-seq thing)))
 
 (defn print-dump
+  "Print string dump of `thing` to `*out*`. Return `nil`."
   [thing]
   (doseq [line (dump-seq thing)]
     (println line)))
 
 (defmacro with-dump-format
+  "Alter the current dump format for any dump sequences created in the
+  dynamic scope of `body`."
   [opts & body]
   `(binding [*dump-format* (merge *dump-format* ~opts)]
      ~@body))

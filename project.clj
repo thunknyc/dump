@@ -1,4 +1,4 @@
-(defproject thunknyc/dump "0.1.0"
+(defproject thunknyc/dump "0.1.1"
   :description "A Clojure `hexdump -C` facility."
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
