@@ -66,6 +66,14 @@ user> (clojure.pprint/pprint dump/*dump-format*)
 user> 
 ```
 
+You don't have to print dumps; you can get a sequence of dump lines using `dump-seq` or use `dump-str` to get a string of that sequence joined with newlines:
+
+```
+user> (first (dump/dump-seq "This is a test of the emergency broadcast system. This is only a test."))
+;; => "00000000  54 68 69 73 20 69 73 20  61 20 74 65 73 74 20 6f  |This is a test o|"
+user> 
+```
+
 Have fun!
 
 ## License
